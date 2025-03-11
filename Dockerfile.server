@@ -1,0 +1,26 @@
+# Dockerfile.server
+
+# Stage 1: Build the server
+FROM node:22-alpine AS builder
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy all server source code and build the project
+COPY . .
+RUN npm run build
+
+# Stage 2: Production image
+FROM node:22-alpine
+WORKDIR /app
+
+# Copy the production build from the builder stage
+COPY --from=builder /app/dist ./dist
+
+# Expose the port that your server listens on (adjust if needed)
+EXPOSE 3000
+
+# Start the server (update the entry file if necessary)
+CMD ["node", "dist/index.js"]
