@@ -1,4 +1,3 @@
-import api from './api';
 
 // Description: Get active contracts
 // Endpoint: GET /api/contracts
@@ -73,7 +72,7 @@ export const getContracts = () => {
 // Endpoint: POST /api/contracts/sign
 // Request: { contractId: string }
 // Response: { success: boolean, message: string }
-export const signContract = (contractId: string) => {
+export const signContract = (_contractId: string) => {
   // Mocking the response
   return new Promise((resolve) => {
     setTimeout(() => {

@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { AxiosRequestConfig, AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 const api = axios.create({
   headers: {
@@ -12,7 +12,7 @@ const api = axios.create({
 let accessToken: string | null = null;
 // Axios request interceptor: Attach access token to headers
 api.interceptors.request.use(
-  (config: AxiosRequestConfig): AxiosRequestConfig => {
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     if (!accessToken) {
       accessToken = localStorage.getItem('accessToken');
     }
@@ -31,7 +31,7 @@ api.interceptors.response.use(
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
     // If the error is due to an expired access token
-    if ([401, 403].includes(error.response?.status) && !originalRequest._retry) {
+    if (error.response && [401, 403].includes(error.response.status) && !originalRequest._retry) {
       originalRequest._retry = true; // Mark the request as retried
 
       try {
@@ -40,7 +40,7 @@ api.interceptors.response.use(
           refreshToken: localStorage.getItem('refreshToken'),
         });
         accessToken = data.data.accessToken;
-        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('accessToken', accessToken!);
         localStorage.setItem('refreshToken', data.data.refreshToken);
 
         // Retry the original request with the new token

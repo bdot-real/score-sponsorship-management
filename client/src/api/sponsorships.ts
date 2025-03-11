@@ -1,4 +1,3 @@
-import api from './api';
 
 // Description: Get list of sponsorship opportunities
 // Endpoint: GET /api/sponsorships
@@ -135,7 +134,7 @@ export const getSponsorships = (filters?: any) => {
 // Endpoint: POST /api/sponsorships/apply
 // Request: { sponsorshipId: string }
 // Response: { success: boolean, message: string }
-export const applySponsorships = (sponsorshipId: string) => {
+export const applySponsorships = (_sponsorshipId: string) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({

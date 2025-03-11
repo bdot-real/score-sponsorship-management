@@ -37,12 +37,16 @@ export function Register() {
         description: "Account created successfully",
       })
       navigate("/login")
-    } catch (error) {
+    } catch (error: unknown) {
       console.log("Register error:", error)
+      let errorMessage = "Something went wrong"
+      if (error instanceof Error) {
+        errorMessage = error.message
+      }
       toast({
         variant: "destructive",
         title: "Error",
-        description: error?.message,
+        description: errorMessage,
       })
     } finally {
       setLoading(false)

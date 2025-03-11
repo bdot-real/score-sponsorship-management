@@ -9,7 +9,7 @@ export const login = async (email: string, password: string) => {
     return { accessToken: '123', refreshToken: '123' }; // pythagora_mocked_data - remove when the backend is being implemented
     const response = await api.post('/api/auth/login', { email, password });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login error:', error);
     throw new Error(error?.response?.data?.message || error.message);
   }
@@ -24,7 +24,7 @@ export const register = async (email: string, password: string) => {
     return { email: 'jake@example.com' }; // pythagora_mocked_data - remove when the backend is being implemented
     const response = await api.post('/api/auth/register', {email, password});
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error?.response?.data?.message || error.message);
   }
 };
@@ -36,7 +36,7 @@ export const register = async (email: string, password: string) => {
 export const logout = async () => {
   try {
     return await api.post('/api/auth/logout');
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error?.response?.data?.message || error.message);
   }
 };

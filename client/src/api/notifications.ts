@@ -1,4 +1,3 @@
-import api from './api';
 
 // Description: Get user notifications
 // Endpoint: GET /api/notifications
@@ -44,7 +43,7 @@ export const getNotifications = () => {
 // Endpoint: POST /api/notifications/read
 // Request: { notificationId: string }
 // Response: { success: boolean, message: string }
-export const markNotificationAsRead = (notificationId: string) => {
+export const markNotificationAsRead = (_notificationId: string) => {
   // Mocking the response
   return new Promise((resolve) => {
     setTimeout(() => {

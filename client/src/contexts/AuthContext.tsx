@@ -24,24 +24,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("accessToken", response.accessToken);
         setIsAuthenticated(true);
       } else {
-        throw new Error(error?.response?.data?.message || 'Login failed');
+        throw new Error('Login failed');
       }
     } catch (error) {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("accessToken");
       setIsAuthenticated(false);
-      throw new Error(error?.message || 'Login failed');
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error('Login failed');
+      }
     }
   };
 
   const register = async (email: string, password: string) => {
     try {
-      const response = await apiRegister(email, password);
-    } catch (error) {
+      await apiRegister(email, password);
+    } catch (error: unknown) {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("accessToken");
       setIsAuthenticated(false);
-      throw new Error(error?.message || 'Registration failed');
+      if (error instanceof Error) {
+        throw new Error(error.message || 'Registration failed');
+      } else {
+        throw new Error('Registration failed');
+      }
     }
   };
 

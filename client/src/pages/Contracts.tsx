@@ -6,9 +6,27 @@ import { getContracts, signContract } from "@/api/contracts";
 import { FileText, Check, Circle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Define TypeScript interfaces for contract structure
+interface TimelineEvent {
+  title: string;
+  date: string;
+  description: string;
+  status: "completed" | "current" | "upcoming";
+}
+
+interface Contract {
+  _id: string;
+  title: string;
+  status: "completed" | "current" | "upcoming";
+  value: number;
+  startDate: string;
+  endDate: string;
+  timeline: TimelineEvent[];
+}
+
 export function Contracts() {
-  const [contracts, setContracts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [_loading, setLoading] = useState<boolean>(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -17,13 +35,13 @@ export function Contracts() {
 
   const loadContracts = async () => {
     try {
-      const response = await getContracts();
+      const response = await getContracts() as { contracts: Contract[] };
       setContracts(response.contracts);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to load contracts",
       });
     } finally {
       setLoading(false);
@@ -37,22 +55,25 @@ export function Contracts() {
         title: "Success",
         description: "Contract signed successfully",
       });
-    } catch (error) {
+
+      // Refresh contracts after signing
+      loadContracts();
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to sign contract",
       });
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status: "completed" | "current" | "upcoming") => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return <Check className="h-4 w-4 text-green-500" />;
-      case 'current':
+      case "current":
         return <Circle className="h-4 w-4 text-blue-500 animate-pulse" />;
-      case 'upcoming':
+      case "upcoming":
         return <Clock className="h-4 w-4 text-gray-500" />;
       default:
         return null;
@@ -80,7 +101,7 @@ export function Contracts() {
                   <div>
                     <p className="text-sm text-muted-foreground">Status</p>
                     <p className="flex items-center">
-                      <Check className="mr-2 h-4 w-4 text-green-500" />
+                      {getStatusIcon(contract.status)}
                       {contract.status}
                     </p>
                   </div>
@@ -108,7 +129,7 @@ export function Contracts() {
                           key={index}
                           className={cn(
                             "relative pl-10",
-                            event.status === 'current' && "animate-pulse"
+                            event.status === "current" && "animate-pulse"
                           )}
                         >
                           <div className="absolute left-2.5 top-1 -translate-x-1/2 transform">

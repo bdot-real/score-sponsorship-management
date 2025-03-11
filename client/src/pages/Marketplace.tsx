@@ -22,8 +22,18 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
+export interface Opportunity {
+  _id: string;
+  title: string;
+  description: string;
+  status: string;
+  location: string;
+  type: string;
+  price: number;
+}
+
 export function Marketplace() {
-  const [opportunities, setOpportunities] = useState([]);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
@@ -37,7 +47,7 @@ export function Marketplace() {
   const loadOpportunities = async () => {
     try {
       setLoading(true);
-      const response = await getSponsorships(filters);
+      const response = await getSponsorships(filters) as { sponsorships: Opportunity[] };
       const filtered = response.sponsorships.filter(opp => 
         opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         opp.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -47,7 +57,7 @@ export function Marketplace() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
       });
     } finally {
       setLoading(false);
@@ -69,7 +79,7 @@ export function Marketplace() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
       });
     }
   };

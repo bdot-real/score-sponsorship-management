@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Bell, BellRing, FileText, Globe, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+//import { setLoading } from "lucide-react/dist/utils/loading";
 type Notification = {
   _id: string;
   title: string;
@@ -27,12 +27,12 @@ export function Notifications() {
   const loadNotifications = async () => {
     try {
       const response = await getNotifications();
-      setNotifications(response.notifications);
+      setNotifications((response as { notifications: Notification[] }).notifications);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
       });
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ export function Notifications() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : String(error),
       });
     }
   };
@@ -70,7 +70,11 @@ export function Notifications() {
         return Bell;
     }
   };
-
+  
+  if (loading) {
+    return <div>Loading notifications...</div>;
+  }
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
